@@ -6,7 +6,7 @@ from sympy import symbols, sympify
 
 
 
-def str_to_func(function_str: str) -> Callable[[float], float]:
+def str_to_func(function_str: str):
     x = symbols('x')
     function = sympify(function_str)
     return lambda val: float(function.subs(x, val))
@@ -22,15 +22,18 @@ def Secant_method(function: str, x0: float, x1: float) -> float:
     :return: An approximate root or the best approximation after 30 iterations
     """
     graph = str_to_func(function)
+    EPSILON = 1e-12
+    updated = False
     for item in range(30):
         y0 = graph(x0)
         y1=graph(x1)
-        if x1-x0 == 0:
-            return None
+        if abs(y1 - y0) < EPSILON:
+            break
         x2 = x1 - y1 * (x1 - x0) / (y1 - y0)
         print(x2)
         x0,x1 = x1,x2
-    return x2
+        updated = True
+    return x1 if updated else None
 def ge(matrix: list[list[float]]) -> list[list[float]]:
     """
     Transforms a matrix into upper triangular form using Gaussian elimination.
